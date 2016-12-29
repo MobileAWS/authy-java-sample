@@ -1,41 +1,32 @@
-import java.sql.*;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Map;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static spark.Spark.*;
-
 import com.authy.AuthyApiClient;
 import com.authy.AuthyUtil;
 import com.authy.api.Hash;
 import com.authy.api.Token;
 import org.json.JSONObject;
-import spark.ModelAndView;
 
-import static spark.Spark.get;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import com.heroku.sdk.jdbc.DatabaseUrl;
+import static spark.Spark.*;
 
 public class Main {
 
-    private static final String TOKEN = "YOUR AUTHY TOKEN";
-
     private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
-
+    private static String AUTHY_KEY = "";
 
     public static void main(String[] args) {
 
         port(Integer.valueOf(System.getenv("PORT")));
         staticFileLocation("/public");
 
-        get("/hello", (req, res) -> "Hello World");
 
-        get("/", (req, res) -> "Hello Index!");
+        if (System.getenv("AUTHY_KEY") != null) {
+            AUTHY_KEY = System.getenv("AUTHY_KEY");
+        }
+
+
+        get("/", (req, res) -> "Hello Authy! " + (AUTHY_KEY.length() == 0 ? "PLEASE SET YOUR AUTHY KEY USING: heroku config:set AUTHY_KEY=YOURKEYHERE as specified at: https://devcenter.heroku.com/articles/config-vars" : "Authy key is ready!"));
 
 
         get("/approved", (request, response) -> {
