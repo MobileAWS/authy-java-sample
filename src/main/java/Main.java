@@ -117,7 +117,6 @@ public class Main {
                 return "ERROR";
             }
 
-
         });
 
         get("/validate", (request, response) -> {
