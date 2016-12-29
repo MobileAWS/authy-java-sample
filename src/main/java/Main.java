@@ -46,7 +46,7 @@ public class Main {
                 }
 
 
-                if (!AuthyUtil.validateSignatureForGet(params, headers, request.url(), TOKEN)) {
+                if (!AuthyUtil.validateSignatureForGet(params, headers, request.url(), AUTHY_KEY)) {
                     throw new SecurityException("Invalid Signature");
                 }
 
@@ -73,7 +73,7 @@ public class Main {
                     headers.put(h, request.headers(h));
                 }
 
-                if (!AuthyUtil.validateSignatureForPost(request.body(), headers, request.url(), TOKEN)) {
+                if (!AuthyUtil.validateSignatureForPost(request.body(), headers, request.url(), AUTHY_KEY)) {
                     throw new SecurityException("Invalid Signature");
                 }
 
@@ -93,7 +93,7 @@ public class Main {
         get("/ask", (request, response) -> {
 
             try {
-                AuthyApiClient client = new AuthyApiClient(TOKEN);
+                AuthyApiClient client = new AuthyApiClient(AUTHY_KEY);
                 System.out.println(client.getUsers());
                 System.out.println(request.queryParams("userId"));
                 Hash tmp = client.getUsers().requestSms(Integer.parseInt(request.queryParams("userId")));
@@ -109,7 +109,7 @@ public class Main {
         get("/onetouch", (request, response) -> {
 
             try {
-                AuthyApiClient client = new AuthyApiClient(TOKEN);
+                AuthyApiClient client = new AuthyApiClient(AUTHY_KEY);
                 Hash tmp = client.getUsers().requestSms(Integer.parseInt(request.queryParams("userId")));
                 return "SMS sent";
             } catch (Exception ex) {
@@ -122,10 +122,8 @@ public class Main {
 
         get("/validate", (request, response) -> {
             try {
-                AuthyApiClient client = new AuthyApiClient(TOKEN);
-
+                AuthyApiClient client = new AuthyApiClient(AUTHY_KEY);
                 Token tk = client.getTokens().verify(Integer.parseInt(request.queryParams("userId")), request.queryParams("token"));
-                System.out.println("TOKEN: " + tk);
                 return "Token:" + tk.toJSON();
             } catch (Exception ex) {
                 ex.printStackTrace();
